@@ -1,4 +1,4 @@
-# Windows Browser Credential Access (Security Research)
+# Browser Credential Extractor
 
 ## Overview
 
@@ -38,11 +38,11 @@ Execute only on systems you own or have explicit permission to test.
 
 ## Dependencies
 
-### Runtime Dependencies
-
-- Windows API
+### Library Dependencies
+Included in compiled binary executable file
 - LibSodium
 - SQLite3
+- LibJason
 
 ### Build Dependencies
 
